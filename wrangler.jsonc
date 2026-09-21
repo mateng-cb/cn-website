@@ -1,0 +1,20 @@
+{
+  // Cloudflare Workers 部署配置（对照 web/docs/Cloudflare OpenNext 部署记录.md）
+  // 构建：pnpm run build:cf（opennextjs-cloudflare build → 产物 .open-next/）
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "suanlihaiyang-web",
+  "compatibility_date": "2026-09-01",
+  // OpenNext 需要 Node.js 兼容运行时；缺失时报 Node.JS Compatibility Error
+  "compatibility_flags": ["nodejs_compat"],
+  // Workers 静态资源（next build 的 public/ 与 _next/static 由 assets 托管）
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  // Worker 运行时变量（ISR/revalidate 期取数；密钥类不入库，走 CF 后台机密）：
+  // 构建期同值另由 build 环境注入（本地 build:cf 命令行前缀 / CF Builds 配置）
+  "vars": {
+    "STRAPI_URL": "https://top-slhy.fintechquan.cn"
+  }
+}

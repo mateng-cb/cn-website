@@ -1,0 +1,42 @@
+{
+  "name": "suanlihaiyang-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "算力海洋官网前台（Next.js 15 App Router）",
+  "packageManager": "pnpm@10.11.1",
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "build:cf": "DEPLOY_TARGET=cloudflare opennextjs-cloudflare build",
+    "preview": "pnpm run build:cf && wrangler dev",
+    "deploy": "pnpm run build:cf && wrangler deploy",
+    "upload": "pnpm run build:cf && wrangler deploy --dry-run"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "workerd"
+    ]
+  },
+  "dependencies": {
+    "next": "^15.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.6",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.6.3",
+    "vitest": "^3.1.4",
+    "wrangler": "^4.135.0"
+  }
+}

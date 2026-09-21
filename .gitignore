@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+.open-next/
+dist/
+build/
+
+# Environment & secrets（.env.local 不入库；.env.example 留档）
+.env
+.env.*
+!.env.example
+
+# wrangler 本地状态（wrangler dev 产物）
+.wrangler/
+
+# Logs & caches
+*.log
+.cache/
+coverage/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# TS incremental build info
+*.tsbuildinfo

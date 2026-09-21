@@ -1,0 +1,14 @@
+# web 构建上下文瘦身（deploy/web.Dockerfile）；测试见 web/tests/deploy-config.test.ts
+node_modules
+.next
+out
+tests
+coverage
+*.log
+*.tsbuildinfo
+.env
+.env.*
+.env.local
+next-env.d.ts
+Dockerfile
+docker-compose*.yml

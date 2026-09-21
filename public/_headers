@@ -1,0 +1,4 @@
+# Cloudflare Workers 静态资源长缓存（构建产物带内容哈希，可 immutable）
+# Docker/nginx 路径不消费此文件（由 Next 自身 Cache-Control 管理）
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
