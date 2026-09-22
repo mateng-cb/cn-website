@@ -113,11 +113,12 @@ export interface LogoItemData {
   image?: StrapiMedia | null;
 }
 
-/** elements.logo-group：上方小字 + 主标题 + 组内 Logo 列表（3.3 设计稿四色卡） */
+/** elements.logo-group：上方小字 + 主标题 + 简介 + 组内 Logo 列表（3.3 设计稿四色卡） */
 export interface LogoGroupData {
   id?: number;
   label?: string | null;
   title?: string | null;
+  summary?: string | null;
   logos?: LogoItemData[] | null;
 }
 
@@ -356,9 +357,9 @@ export interface MainNavNode {
 
 /**
  * News 集合（04 号工单）：externalUrl 二态——有值列表卡直跳外链，无值进 /news/[slug]。
- * draftAndPublish:false + 自建 publishDate（datetime）：排序值由内容侧显式控制
- * （publishedAt 是 Strapi 保留字段，create/PUT 会被覆写为操作时刻，故字段名避开）；
- * 草稿能力 07 号工单再议。displayDate 为列表卡时间槽的显示覆盖
+ * draftAndPublish:true（2026-09-22 起，与 page/landing 一致）+ 自建 publishDate（date，
+ * 仅年月日）：排序/显示值由内容侧显式控制（publishedAt 是 Strapi 保留字段，create/PUT
+ * 会被覆写为操作时刻，故字段名避开）。displayDate 为列表卡时间槽的显示覆盖
  * （v0.3 第三条卡 time 为「研究合作开放中」非日期）。
  */
 export interface NewsData {
@@ -388,6 +389,7 @@ export interface SeoData {
  * 洞察内容集合（2.0 PRD 6.1）：category ASCII 枚举，中文文案映射在 web 端
  * 常量（ContentGrid）；draftAndPublish:false 保存即生效，缓存口径同 news
  * （force-cache + tag 'strapi'，INSTANT_UIDS 已登记保证保存即失效）。
+ * publishDate 为 date 类型仅年月日（2026-09-22 与 news 统一）。
  */
 export interface InsightEntryData {
   id: number;

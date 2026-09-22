@@ -38,8 +38,11 @@ export function SolutionList({ data }: { data: SolutionListData }) {
                   <span className="solution-info">
                     <span className="solution-title">
                       <b>{item.title}</b>
+                      {/* 展开提示紧随标题后：文字双态 + 箭头 ::after 均由 CSS
+                          [open] 切换（收起「向下展开 ↓」↔ 展开「收起 ↑」，零 JS） */}
                       <span className="solution-toggle" aria-hidden="true">
-                        向下展开
+                        <span className="solution-toggle-expand">向下展开</span>
+                        <span className="solution-toggle-collapse">收起</span>
                       </span>
                     </span>
                     {item.summary ? (

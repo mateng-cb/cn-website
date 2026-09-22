@@ -64,7 +64,7 @@ export function HqChrome({
                 className="hq-emblem"
                 src={logoUrl}
                 alt={config?.siteName ?? '华侨数港'}
-                width={153}
+                width={44}
                 height={44}
               />
             ) : null}

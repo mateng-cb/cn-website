@@ -307,9 +307,9 @@ export async function getHqNavPages(): Promise<HqNavItem[]> {
 
 /**
  * News 集合最新 N 条（content-grid kind=news 数据源，按 publishDate 倒序）。
- * 缓存策略与 getPage 一致（force-cache + tag 'strapi'）：News 是
- * draftAndPublish:false 的自管排序，增删改发 entry.update——10 号工单的
- * revalidate 分发需覆盖 news 的 update/delete 事件（当前 tag 全站共享，天然覆盖）。
+ * 缓存策略与 getPage 一致（force-cache + tag 'strapi'）：News 自 2026-09-22 起
+ * 为 draftAndPublish:true，公共 API 只回已发布条目，发布/取消发布/删除经
+ * entry.publish/unpublish/delete 事件全站失效（与 page/landing 同链路）。
  */
 export async function getLatestNews(limit = 3): Promise<NewsData[]> {
   const params = new URLSearchParams({
@@ -329,8 +329,8 @@ export async function getLatestNews(limit = 3): Promise<NewsData[]> {
 
 /**
  * 单条新闻（/news/[slug] 详情；draft:true 实时取，07 号预览链路）。
- * news-item 为 draftAndPublish:false（保存即生效、无草稿副本），但前台
- * getNews 走 force-cache 缓存——预览态用 token + 不缓存绕开缓存看最新保存内容。
+ * news-item 自 2026-09-22 起为 draftAndPublish:true（草稿/发布与 page 一致），
+ * 正常态走 force-cache 只取已发布；预览态 status=draft + 只读 token + 不缓存。
  */
 export async function getNews(slug: string, opts: DraftOptions = {}): Promise<NewsData | null> {
   const params = new URLSearchParams({

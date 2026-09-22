@@ -69,29 +69,19 @@ describe('/api/revalidate（辅缝：request → response）', () => {
     }
   });
 
-  it('news-item 的 entry.update → 触发失效（draftAndPublish:false 保存即生效，10 号复审修正）', async () => {
-    const res = await POST(
-      makeRequest(
-        { authorization: `Bearer ${TOKEN}`, 'x-strapi-event': 'entry.update' },
-        webhookPayload('api::news-item.news-item'),
-      ),
-    );
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.revalidated).toBe(true);
-    expect(revalidateTag).toHaveBeenCalledWith('strapi');
-  });
-
-  it('news-item 的 entry.create → 触发失效（新建即前台可见）', async () => {
-    const res = await POST(
-      makeRequest(
-        { authorization: `Bearer ${TOKEN}`, 'x-strapi-event': 'entry.create' },
-        webhookPayload('api::news-item.news-item'),
-      ),
-    );
-    expect(res.status).toBe(200);
-    expect((await res.json()).revalidated).toBe(true);
-    expect(revalidateTag).toHaveBeenCalledWith('strapi');
+  it('news-item 的 entry.update/create → 同样跳过（2026-09-22 起并入 D&P 队列，失效靠 entry.publish）', async () => {
+    for (const event of ['entry.update', 'entry.create']) {
+      revalidateTag.mockClear();
+      const res = await POST(
+        makeRequest(
+          { authorization: `Bearer ${TOKEN}`, 'x-strapi-event': event },
+          webhookPayload('api::news-item.news-item'),
+        ),
+      );
+      expect(res.status).toBe(200);
+      expect((await res.json()).revalidated).toBe(false);
+      expect(revalidateTag).not.toHaveBeenCalled();
+    }
   });
 
   it('entry.update 无 body/坏 JSON → 保守跳过（与 D&P 行为一致）', async () => {

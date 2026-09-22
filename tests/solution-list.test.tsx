@@ -43,9 +43,12 @@ describe('/alliance：解决方案折叠列表（2.0 PRD 7.2）', () => {
     expect(logoText?.getAttribute('aria-hidden')).toBe('true');
     expect(logoText?.textContent).toBe('城市');
     expect(screen.getByText('城市智能体解决方案').tagName).toBe('B');
-    // 展开提示紧随标题后（.solution-title 内），纯 CSS 箭头（::after），DOM 仅文字
+    // 展开提示紧随标题后（.solution-title 内）：文字双态 span + 箭头 ::after
+    // 均由 CSS [open] 切换（收起「向下展开」↔ 展开「收起」），DOM 两态并存
     const title = left?.querySelector('.solution-title');
-    expect(title?.querySelector('.solution-toggle')?.textContent).toBe('向下展开');
+    const toggle = title?.querySelector('.solution-toggle');
+    expect(toggle?.querySelector('.solution-toggle-expand')?.textContent).toBe('向下展开');
+    expect(toggle?.querySelector('.solution-toggle-collapse')?.textContent).toBe('收起');
     // 简介在标题组下方
     expect(left?.querySelector('.solution-summary')?.textContent).toContain(
       '面向城市治理与公共服务的智能体平台',

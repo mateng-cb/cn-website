@@ -258,7 +258,7 @@ describe('逐页 CTA 回退链（验收 4）', () => {
   it('页面未配置 → site-config formCtaLabel/formUrl；外链新窗', () => {
     renderChrome({ currentSlug: 'services' });
     const cta = document.querySelector('.site-nav-cta') as HTMLAnchorElement;
-    expect(cta.textContent).toBe('项目咨询');
+    expect(cta.textContent).toBe('合作咨询');
     expect(cta.getAttribute('href')).toBe(config.formUrl);
     expect(cta.getAttribute('target')).toBe('_blank');
     expect(cta.getAttribute('rel')).toBe('noopener noreferrer');
@@ -271,18 +271,21 @@ describe('逐页 CTA 回退链（验收 4）', () => {
       </MainChrome>,
     );
     const cta = document.querySelector('.site-nav-cta') as HTMLAnchorElement;
-    expect(cta.textContent).toBe('项目咨询');
+    expect(cta.textContent).toBe('合作咨询');
     expect(cta.getAttribute('href')).toBe('#');
   });
 
-  it('seed 逐页 CTA 对照 v0.3 + 2.0 PRD 1.1：home/government=合作咨询，industry=项目咨询，insights=研究合作', () => {
+  it('seed 逐页 CTA：全局 formCtaLabel=合作咨询，页面级仅留差异化（insights=研究合作）', () => {
     const bySlug = Object.fromEntries(mainSeedPages.map((p) => [p.slug, p]));
-    // 2.0 PRD 1.1：首页右上角「项目咨询」→「合作咨询」（仅页面级，
-    // site-config formCtaLabel 全局回退仍是「项目咨询」——见上例）
-    expect(bySlug.home.ctaLabel).toBe('合作咨询');
+    // 2026-09-22 全站统一：主站头部 CTA 文字走全局 formCtaLabel=合作咨询，
+    // 与全局同值的页面级 ctaLabel 已清（home/government/industry——页面级
+    // 覆盖仅用于真正差异化文案，避免后台改全局时个别页脱队）；锚点 ctaUrl 保留逐页
+    expect(bySlug.home.ctaLabel).toBeUndefined();
     expect(bySlug.home.ctaUrl).toBe('#contact');
-    expect(bySlug.government.ctaLabel).toBe('合作咨询');
-    expect(bySlug.industry.ctaLabel).toBe('项目咨询');
+    expect(bySlug.government.ctaLabel).toBeUndefined();
+    expect(bySlug.government.ctaUrl).toBe('#cooperate');
+    expect(bySlug.industry.ctaLabel).toBeUndefined();
+    expect(bySlug.industry.ctaUrl).toBe('#contact');
     expect(bySlug.insights.ctaLabel).toBe('研究合作');
     expect(bySlug.insights.ctaUrl).toBe('#cooperate');
     // v0.3 services/resources/alliance 无 nav-cta：seed 留空走全局回退

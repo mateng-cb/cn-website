@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, cleanup, act } from '@testing-library/react';
 import { existsSync } from 'node:fs';
 import path from 'node:path';

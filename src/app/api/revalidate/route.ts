@@ -9,10 +9,10 @@ import type { NextRequest } from 'next/server';
  *   dev 默认 'dev-webhook-shared-token' 两侧一致，生产必须注入强随机值）
  * - X-Strapi-Event + body.uid 区分内容类型（Strapi 5 webhook payload 含
  *   { event, model, uid, entry }，uid 形如 api::news-item.news-item）：
- *   - page / landing-page 为 draftAndPublish 类型——entry.update/entry.create
- *     只发生在保存草稿/新建草稿，发布另有 entry.publish → 跳过（防编辑器每次
- *     保存草稿打穿缓存）
- *   - news-item 为 draftAndPublish:false（保存即生效）——保存/新建只发
+ *   - page / landing-page / news-item 为 draftAndPublish 类型——entry.update/
+ *     entry.create 只发生在保存草稿/新建草稿，发布另有 entry.publish → 跳过
+ *     （防编辑器每次保存草稿打穿缓存；news-item 自 2026-09-22 起并入此列）
+ *   - insight-entry 为 draftAndPublish:false（保存即生效）——保存/新建只发
  *     entry.update/entry.create，必须执行失效，否则 named volume 持久化的
  *     force-cache 永不陈旧翻转
  *   - 其余事件（publish/unpublish/delete/media.*）一律失效
@@ -23,8 +23,9 @@ import type { NextRequest } from 'next/server';
  * 无草稿态（保存即发布）的即时集合：update/create 即前台可见的内容变化。
  * 维护点：未来新增 draftAndPublish:false 且被前台缓存取数的内容类型须登记
  * 于此，否则保存后前台缓存永不失效（site-config 系走 no-store 不需要）。
+ * news-item 已于 2026-09-22 开启 draftAndPublish，移出本集合。
  */
-const INSTANT_UIDS = new Set(['api::news-item.news-item', 'api::insight-entry.insight-entry']);
+const INSTANT_UIDS = new Set(['api::insight-entry.insight-entry']);
 
 /** payload 缺失/坏 JSON 时保守视作 D&P 类型（跳过 update/create，与旧行为一致） */
 function isInstantContent(payload: unknown): boolean {

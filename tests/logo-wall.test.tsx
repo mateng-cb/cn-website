@@ -41,4 +41,16 @@ describe('/industry：生态伙伴 Logo 分组卡（3.3 设计稿）', () => {
     expect(screen.getByText('中国 IDC 圈').className).toBe('logo-cell-name');
     expect(screen.getByText('PPIO')).toBeTruthy();
   });
+
+  it('组简介：每组主标题下渲染 summary（2026-09-22 后台可维护）', () => {
+    render(<SectionRenderer sections={page.sections as SectionData[]} />);
+    const wall = document.querySelector('section.logo-wall');
+    const summaries = Array.from(wall?.querySelectorAll('.logo-wall-summary') ?? []).map(
+      (s) => s.textContent,
+    );
+    expect(summaries).toHaveLength(4);
+    expect(summaries[0]).toBe('联合头部 IDC 与数据中心服务商，提供机柜、电力与网络的基础承载能力。');
+    // summary 紧跟主标题（标题 → 简介 → Logo 格 的卡片序）
+    expect(wall?.querySelector('.logo-wall-title + .logo-wall-summary')).toBeTruthy();
+  });
 });

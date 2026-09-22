@@ -148,6 +148,18 @@ a {
   margin: 0 0 20px;
 }
 
+/* 组简介（2026-09-22 后台可维护）：标题与 Logo 格之间，半透明白小字；
+   无 summary 时标题回落 20px 间距（:has 相邻探测） */
+.logo-wall-title:has(+ .logo-wall-summary) {
+  margin-bottom: 6px;
+}
+
+.logo-wall-summary {
+  font-size: var(--fs-caption);
+  color: #c6dcf5;
+  margin: 0 0 18px;
+}
+
 .logo-wall-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -339,6 +351,20 @@ a {
 
 .solution-item[open] .solution-toggle::after {
   content: '↑';
+}
+
+/* 展开提示文字双态互斥（零 JS）：收起态「向下展开」↔ 展开态「收起」，
+   与上方箭头 ::after 同由 [open] 切换 */
+.solution-toggle-collapse {
+  display: none;
+}
+
+.solution-item[open] .solution-toggle-expand {
+  display: none;
+}
+
+.solution-item[open] .solution-toggle-collapse {
+  display: inline;
 }
 
 .solution-body {
@@ -1670,12 +1696,13 @@ ul.cards li img {
   flex: 0 0 auto;
 }
 
-/* 品牌槽 = 横版 logo（logo_cn_en.svg 1187×342）：44px 高自适应宽；
-   页脚仍用 .hq-brand-icon 方槽裁切（下方两条规则为页脚服务） */
+/* 品牌槽 = 方标 logo（logo_icon.svg，2026-09-22 起与静态二级页统一）：
+   44×44 圆角；页脚仍用 .hq-brand-icon 方槽（下方两条规则为页脚服务） */
 [data-skin='gov'] .hq-emblem {
   display: block;
   height: 44px;
-  width: auto;
+  width: 44px;
+  border-radius: 10px;
   flex: 0 0 auto;
 }
 

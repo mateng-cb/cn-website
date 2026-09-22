@@ -18,6 +18,7 @@ export function LogoWall({ data }: { data: LogoWallData }) {
           <div className="logo-wall-group" key={group.id ?? gi}>
             {group.label ? <p className="logo-wall-label">{group.label}</p> : null}
             {group.title ? <h3 className="logo-wall-title">{group.title}</h3> : null}
+            {group.summary ? <p className="logo-wall-summary">{group.summary}</p> : null}
             <div className="logo-wall-grid">
               {(group.logos ?? []).map((logo, li) => (
                 <div className="logo-cell" key={logo.id ?? li}>

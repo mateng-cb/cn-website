@@ -35,7 +35,7 @@ export function MainChrome({
 }) {
   const tree = buildMainNavTree(nav);
   const siteName = config?.siteName ?? '算力海洋';
-  const resolvedCtaLabel = ctaLabel || config?.formCtaLabel || '项目咨询';
+  const resolvedCtaLabel = ctaLabel || config?.formCtaLabel || '合作咨询';
   const resolvedCtaUrl = ctaUrl || config?.formUrl || '#';
   const externalCta = /^https?:\/\//.test(resolvedCtaUrl);
 

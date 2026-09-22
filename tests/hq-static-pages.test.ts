@@ -7,9 +7,10 @@ import { GET as GET_GLOBAL } from '@/app/huaqiao/global/route';
 /**
  * 华侨数港新版二级页（/huaqiao/cloud|enterprise|global 静态单文件页，暂不走 CMS）：
  * 设计侧导出的单文件 HTML 构建期内嵌（scripts/build-hq-static-pages.mjs 生成），
- * 静态段 route 遮蔽同名 [slug] CMS 页。断言四件事：
+ * 静态段 route 遮蔽同名 [slug] CMS 页。断言：
  * 文档响应头正确、base64 主视觉已外置为 public 图、互链改写站内干净路径、
- * 外链（主站/表单）保持原样。
+ * 回主站链接为站内 /（2026-09-22 与门户统一，绝对地址不残留）、外部表单原样；
+ * 导航 5 项与门户 CMS 派生一致 + 页头品牌槽为 /logo/logo_icon.svg 方标。
  */
 const PAGES = [
   {
@@ -53,9 +54,23 @@ describe('/huaqiao 新版静态二级页（单文件内嵌，暂不走 CMS）', 
       for (const other of others) {
         expect(html).toContain(`href="/huaqiao/${other}"`);
       }
-      // 外链保持原样：主站门户 + 咨询表单
-      expect(html).toContain('href="https://suanlihaiyang.com/"');
+      // 回主站链接改站内路径 /（2026-09-22 与门户统一），绝对地址不残留
+      expect(html).toContain('<a href="/">算力海洋主站</a>');
+      expect(html.includes('suanlihaiyang.com')).toBe(false);
+      // 外部咨询表单保持原样
       expect(html).toContain('https://kezhishuzi.cn/share/');
+    });
+
+    it(`/huaqiao/${slug}：导航 5 项与门户一致 + 品牌槽方标 logo_icon`, async () => {
+      const html = await GET().text();
+      const nav = html.match(/<nav class="hq-nav">[\s\S]*?<\/nav>/)?.[0] ?? '';
+      // 导航统一 5 项（首页/企业落地服务/云平台/海外服务/生态合作），active 按当前页
+      expect((nav.match(/<a /g) ?? []).length).toBe(5);
+      expect(nav).toContain('href="/huaqiao"');
+      expect(nav).toContain('href="/huaqiao/ecosystem"');
+      expect(nav).toContain(`<a class="active" href="/huaqiao/${slug}">`);
+      // 品牌槽 = 方标 logo_icon.svg（44×44，2026-09-22 起与门户页头统一）
+      expect(html).toContain('src="/logo/logo_icon.svg"');
     });
   }
 });
