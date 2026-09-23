@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import type { MediaPanelData } from '@/types/strapi';
+import type { MediaPanelData, SlideData, StrapiMedia } from '@/types/strapi';
 import { strapiMediaUrl } from '@/lib/strapi';
 import { Carousel } from '@/components/elements/Carousel';
 import { List } from '@/components/elements/List';
@@ -48,8 +48,12 @@ export function MediaPanel({ panel }: { panel: MediaPanelData }) {
       );
 
     case 'carousel': {
-      const slides = panel.slides ?? [];
-      if (slides.length === 0 || !slides.every((s) => s.image)) return null;
+      // 2026-09-23 cn-strapi 放开 slide.image required（后台不再被空图条目
+      // 拦保存）：空图条目在此过滤——单条漏传只少一张，不整面板消失；全空回退 null
+      const slides = (panel.slides ?? []).filter(
+        (s): s is SlideData & { image: StrapiMedia } => Boolean(s.image),
+      );
+      if (slides.length === 0) return null;
       return (
         <Carousel
           slides={slides.map((s) => ({

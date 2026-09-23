@@ -53,10 +53,12 @@ export interface ListData {
   items: TermItemData[];
 }
 
-/** elements.slide：carousel 面板单张轮播图（2.0 PRD 1.2/5.1） */
+/** elements.slide：carousel 面板单张轮播图（2.0 PRD 1.2/5.1；
+ * 2026-09-23 cn-strapi 放开 image required——后台不再被空图条目拦保存，
+ * 前台 MediaPanel carousel 过滤空图条目渲染） */
 export interface SlideData {
   id?: number;
-  image: StrapiMedia;
+  image?: StrapiMedia | null;
   caption?: string | null;
 }
 

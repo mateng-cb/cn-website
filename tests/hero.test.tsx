@@ -85,6 +85,26 @@ describe('Hero 渲染（fixture 复用 seed JSON）', () => {
     expect(document.querySelectorAll('.hero-dots button')).toHaveLength(3);
   });
 
+  it('slides 空图条目过滤（2026-09-23 cn-strapi 放开 image required）：漏传单条只少一张，全空不渲染轮播', () => {
+    const base = seedHeroToApi();
+    const panel = base.rightPanel as NonNullable<HeroData['rightPanel']>;
+    // 运营漏传一条（image 空，后台不再拦保存）→ 有图 3 张照常渲染
+    render(
+      <Hero
+        data={{ ...base, rightPanel: { ...panel, slides: [...(panel.slides ?? []), { caption: '漏传图条目' }] } }}
+      />,
+    );
+    expect(screen.getAllByRole('img')).toHaveLength(3);
+    expect(document.querySelector('.hero-carousel')).not.toBeNull();
+
+    // 全空（含残留脏数据）→ 轮播面板整体不渲染
+    const { container } = render(
+      <Hero data={{ ...base, rightPanel: { ...panel, slides: [{ caption: 'x' }, { caption: 'y' }] } }} />,
+    );
+    expect(container.querySelector('.hero-carousel')).toBeNull();
+    expect(container.querySelectorAll('img')).toHaveLength(0);
+  });
+
   it('缺省字段安全降级：空 hero 不渲染对应节点', () => {
     const { container } = render(
       <Hero data={{ __component: 'sections.hero' }} />,
