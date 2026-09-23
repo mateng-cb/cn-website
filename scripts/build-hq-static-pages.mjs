@@ -100,7 +100,28 @@ for (const arg of args) {
       `\n      </nav>`,
   );
 
-  // 6. 残留检查：不再有 base64、.html/assets 相对链、字符徽标与回主站绝对地址
+  // 6. head 注入 canonical + OG/Twitter（QA T-108，2026-09-23）：URL 根用
+  //    __SITE_URL__ 占位，route.ts 构建期 replaceAll 为 lib/site-url 的
+  //    SITE_URL——域名配置与全站同源（测试站/正式站免重导出）
+  const titleM = html.match(/<title>([^<]+)<\/title>/);
+  const descM = html.match(/<meta name="description" content="([^"]*)" \/>/);
+  if (!titleM || !descM) throw new Error(`${slug}: title/description 缺失，head 注入失败`);
+  html = html.replace(
+    /<\/title>/,
+    `</title>\n` +
+      `<link rel="canonical" href="__SITE_URL__/huaqiao/${slug}" />\n` +
+      `<meta property="og:type" content="website" />\n` +
+      `<meta property="og:locale" content="zh_CN" />\n` +
+      `<meta property="og:site_name" content="算力海洋" />\n` +
+      `<meta property="og:title" content="${titleM[1]}" />\n` +
+      `<meta property="og:description" content="${descM[1]}" />\n` +
+      `<meta property="og:url" content="__SITE_URL__/huaqiao/${slug}" />\n` +
+      `<meta name="twitter:card" content="summary_large_image" />\n` +
+      `<meta name="twitter:title" content="${titleM[1]}" />\n` +
+      `<meta name="twitter:description" content="${descM[1]}" />`,
+  );
+
+  // 7. 残留检查：不再有 base64、.html/assets 相对链、字符徽标与回主站绝对地址
   if (/data:image\/[a-z+]+;base64,/.test(html)) throw new Error(`${slug}: base64 清理不彻底`);
   if (/href="[^"]*\.html"/.test(html)) throw new Error(`${slug}: 仍有 .html 相对链残留`);
   if (/assets\//.test(html)) throw new Error(`${slug}: 仍有 assets/ 相对路径残留`);

@@ -1,4 +1,5 @@
 import { HQ_GLOBAL_PAGE_HTML } from '@/lib/hq-static/global';
+import { SITE_URL } from '@/lib/site-url';
 
 /**
  * /huaqiao/global 静态单文件页（2026-09 新版二级页）。
@@ -12,7 +13,9 @@ import { HQ_GLOBAL_PAGE_HTML } from '@/lib/hq-static/global';
 export const dynamic = 'force-static';
 
 export function GET() {
-  return new Response(HQ_GLOBAL_PAGE_HTML, {
+  // __SITE_URL__ 占位符（head 内 canonical/og:url，QA T-108）在此替换——
+  // force-static 构建期执行一次，域名与全站 SITE_URL 配置同源
+  return new Response(HQ_GLOBAL_PAGE_HTML.replaceAll('__SITE_URL__', SITE_URL), {
     headers: { 'content-type': 'text/html; charset=utf-8' },
   });
 }
