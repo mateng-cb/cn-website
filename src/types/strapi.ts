@@ -93,7 +93,6 @@ export interface MediaPanelData {
 /** sections.hero 组件实例（动态区元素带 __component 标记） */
 export interface HeroData {
   __component: 'sections.hero';
-  head?: SectionHeadData | null;
   eyebrow?: string | null;
   /** 内联富文本（<br /> / <em>），渲染时直接注入 */
   heading?: string | null;
@@ -201,7 +200,6 @@ export interface CardGridData {
 
 export interface SignalBandData {
   __component: 'sections.signal-band';
-  head?: SectionHeadData | null;
   items?: MetaRowData[] | null;
 }
 
