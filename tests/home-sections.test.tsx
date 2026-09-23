@@ -126,8 +126,12 @@ describe('SplitMedia 渲染（v0.3 .section.tint > .split + .gov-card）', () =>
 
     const primary = left.querySelector('.actions a.primary')!;
     expect(primary.getAttribute('href')).toBe('/huaqiao');
+    // 分站入口新标签打开、主站内容页同窗（2026-09-23：lib/link-target 前缀判定）
+    expect(primary.getAttribute('target')).toBe('_blank');
     expect(primary.textContent).toBe('进入华侨数港主页');
-    expect(left.querySelector('.actions a.secondary')?.getAttribute('href')).toBe('/government');
+    const secondary = left.querySelector('.actions a.secondary')!;
+    expect(secondary.getAttribute('href')).toBe('/government');
+    expect(secondary.getAttribute('target')).toBeNull();
   });
 
   it('右栏 govCard：span 标签 + h3 + p + 四条列表', () => {

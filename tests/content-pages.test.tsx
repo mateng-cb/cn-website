@@ -279,6 +279,10 @@ describe('/government：numbered 六卡（序号不入库）+ split showcase + c
     expect(screen.getByRole('link', { name: '了解华侨数港' }).getAttribute('href')).toBe(
       '/huaqiao',
     );
+    // 分站入口新标签打开（2026-09-23：/huaqiao 前缀走 lib/link-target）
+    expect(screen.getByRole('link', { name: '了解华侨数港' }).getAttribute('target')).toBe(
+      '_blank',
+    );
   });
 
   it('cta anchor=cooperate，按钮走全局 formUrl（同首页）', () => {

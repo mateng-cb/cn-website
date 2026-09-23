@@ -3,6 +3,7 @@ import type { CardGridData } from '@/types/strapi';
 import { SectionHead } from '@/components/elements/SectionHead';
 import { List } from '@/components/elements/List';
 import { strapiMediaUrl } from '@/lib/strapi';
+import { openInNewTab } from '@/lib/link-target';
 
 /** 序号前置零：01 / 02 / …（序号不入库，由 index 渲染） */
 function pad(index: number) {
@@ -141,7 +142,7 @@ export function CardGrid({ data }: { data: CardGridData }) {
               {card.link ? (
                 <a
                   href={card.link}
-                  {...(/^https?:\/\//.test(card.link)
+                  {...(openInNewTab(card.link)
                     ? { target: '_blank', rel: 'noopener noreferrer' }
                     : {})}
                 >
@@ -212,7 +213,7 @@ export function CardGrid({ data }: { data: CardGridData }) {
           <a
             className={data.footerAction.type ?? 'primary'}
             href={data.footerAction.url ?? '#'}
-            {...(/^https?:\/\//.test(data.footerAction.url ?? '')
+            {...(openInNewTab(data.footerAction.url)
               ? { target: '_blank', rel: 'noopener noreferrer' }
               : {})}
           >

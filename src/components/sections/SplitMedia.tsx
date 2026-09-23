@@ -2,6 +2,7 @@ import type { SplitMediaData } from '@/types/strapi';
 import { MultiLineHeading } from '@/components/elements/SectionHead';
 import { List } from '@/components/elements/List';
 import { MediaPanel } from '@/components/elements/MediaPanel';
+import { openInNewTab } from '@/lib/link-target';
 
 /**
  * 图文分栏（v0.3 两种形态）：
@@ -30,7 +31,7 @@ export function SplitMedia({ data }: { data: SplitMediaData }) {
               key={action.id ?? i}
               className={action.type ?? 'primary'}
               href={action.url ?? '#'}
-              {...(/^https?:\/\//.test(action.url ?? '')
+              {...(openInNewTab(action.url)
                 ? { target: '_blank', rel: 'noopener noreferrer' }
                 : {})}
             >

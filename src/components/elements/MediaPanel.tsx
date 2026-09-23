@@ -3,6 +3,7 @@ import type { MediaPanelData } from '@/types/strapi';
 import { strapiMediaUrl } from '@/lib/strapi';
 import { Carousel } from '@/components/elements/Carousel';
 import { List } from '@/components/elements/List';
+import { openInNewTab } from '@/lib/link-target';
 
 /**
  * 媒体面板（v0.3 右栏全家桶），hero 与 split-media 共用。
@@ -73,7 +74,7 @@ export function MediaPanel({ panel }: { panel: MediaPanelData }) {
             <a
               href={panel.link}
               {...(panel.linkPrimary ? { className: 'primary' } : {})}
-              {...(/^https?:\/\//.test(panel.link)
+              {...(openInNewTab(panel.link)
                 ? { target: '_blank', rel: 'noopener noreferrer' }
                 : {})}
             >
@@ -104,7 +105,7 @@ export function MediaPanel({ panel }: { panel: MediaPanelData }) {
             <a
               href={panel.link}
               {...(panel.linkPrimary ? { className: 'primary' } : {})}
-              {...(/^https?:\/\//.test(panel.link)
+              {...(openInNewTab(panel.link)
                 ? { target: '_blank', rel: 'noopener noreferrer' }
                 : {})}
             >
@@ -175,7 +176,7 @@ export function MediaPanel({ panel }: { panel: MediaPanelData }) {
           {panel.link && panel.ctaText ? (
             <a
               href={panel.link}
-              {...(/^https?:\/\//.test(panel.link)
+              {...(openInNewTab(panel.link)
                 ? { target: '_blank', rel: 'noopener noreferrer' }
                 : {})}
             >

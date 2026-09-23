@@ -1,6 +1,7 @@
 import type { ContentGridData, InsightEntryData } from '@/types/strapi';
 import { SectionHead } from '@/components/elements/SectionHead';
 import { newsDisplayDate } from '@/lib/format';
+import { openInNewTab } from '@/lib/link-target';
 
 /** 2.0 PRD 6.1 四类洞察：CMS ASCII 枚举 → 前台中文标签 */
 const INSIGHT_CATEGORY_LABELS: Record<NonNullable<InsightEntryData['category']>, string> = {
@@ -23,7 +24,8 @@ const INSIGHT_CATEGORY_LABELS: Record<NonNullable<InsightEntryData['category']>,
  *   newsLayout=rows（运行时开关）容器换 .news-rows——/news 列表页一行一条
  *   通栏行卡（卡内纵排 time→标题→摘要→尾链）；CMS 区块缺省 grid 三卡不变。
  * - insightList（2.0 PRD 6.1/6.3）：.insight-list > article（中文分类标签 + h3 +
- *   p 简介 + 「点击查看 →」尾链，外链新窗/站内同窗二态同 hero actions 约定），
+ *   p 简介 + 「点击查看 →」尾链，外链/分站/专题新开窗判定收口 lib/link-target
+ *   （2026-09-23：洞察条目 link 指向 /whitepaper 白皮书专题，点击新标签打开），
  *   数据来自 enrichSections 注入的 data.insights（Insight 集合 publishDate 倒序）。
  *   类名独立于 .insight-cards（insights-news.test 对其有数量断言）。
  *   id=insights 是本页 hero govCard「点击查看」尾链的锚点落点（同 id=news 增量钩子先例）。
@@ -49,7 +51,7 @@ export function ContentGrid({
               {item.excerpt ? <p>{item.excerpt}</p> : null}
               <a
                 href={item.link ?? '#'}
-                {...(/^https?:\/\//.test(item.link ?? '')
+                {...(openInNewTab(item.link)
                   ? { target: '_blank', rel: 'noopener noreferrer' }
                   : {})}
               >

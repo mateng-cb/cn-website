@@ -258,7 +258,9 @@ describe('content-grid kind=insightList（2.0 PRD 6.1/6.3 洞察内容列表）'
     const links = [...document.querySelectorAll('.insight-list a')];
     expect(links).toHaveLength(2);
     expect(links[0].getAttribute('href')).toBe('/whitepaper');
-    expect(links[0].getAttribute('target')).toBeNull();
+    // 专题落地页入口新标签打开（2026-09-23：/whitepaper 前缀走 lib/link-target）
+    expect(links[0].getAttribute('target')).toBe('_blank');
+    expect(links[0].getAttribute('rel')).toBe('noopener noreferrer');
     expect(links[1].getAttribute('href')).toBe('https://example.com/report.pdf');
     expect(links[1].getAttribute('target')).toBe('_blank');
     expect(links[1].getAttribute('rel')).toBe('noopener noreferrer');

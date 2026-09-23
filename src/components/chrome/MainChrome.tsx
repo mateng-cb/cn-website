@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { MainNavItem, MainNavNode, SiteConfigMainData } from '@/types/strapi';
 import { buildMainNavTree } from '@/lib/nav';
+import { openInNewTab } from '@/lib/link-target';
 
 /**
  * 主站全局件（08 号工单，v0.3/index.html header.top + footer.main-footer 骨架）：
@@ -38,7 +39,7 @@ export function MainChrome({
   const siteName = config?.siteName ?? '算力海洋';
   const resolvedCtaLabel = ctaLabel || config?.formCtaLabel || '合作咨询';
   const resolvedCtaUrl = ctaUrl || config?.formUrl || '#';
-  const externalCta = /^https?:\/\//.test(resolvedCtaUrl);
+  const externalCta = openInNewTab(resolvedCtaUrl);
 
   const isActive = (top: MainNavNode) =>
     top.slug === currentSlug || top.children.some((c) => c.slug === currentSlug);
@@ -120,7 +121,7 @@ export function MainChrome({
               <a
                 key={link.id ?? i}
                 href={link.url}
-                {...(/^https?:\/\//.test(link.url)
+                {...(openInNewTab(link.url)
                   ? { target: '_blank', rel: 'noopener noreferrer' }
                   : {})}
               >

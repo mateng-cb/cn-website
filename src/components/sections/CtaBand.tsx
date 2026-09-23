@@ -1,5 +1,6 @@
 import type { CtaBandData } from '@/types/strapi';
 import { MultiLineHeading } from '@/components/elements/SectionHead';
+import { openInNewTab } from '@/lib/link-target';
 
 /**
  * 行动号召条（v0.3）：section#<anchor>.cta > p.eyebrow + h2 + p + a。
@@ -22,7 +23,7 @@ export function CtaBand({ data, formUrl }: { data: CtaBandData; formUrl?: string
       {text ? <p>{text}</p> : null}
       {(data.buttons ?? []).map((button, i) => {
         const href = button.url || data.formUrlOverride || formUrl || '#';
-        const external = /^https?:\/\//.test(href);
+        const external = openInNewTab(href);
         return (
           <a
             key={button.id ?? i}

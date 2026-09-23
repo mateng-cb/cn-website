@@ -1,6 +1,7 @@
 import type { HeroData } from '@/types/strapi';
 import { MediaPanel } from '@/components/elements/MediaPanel';
 import { RichText } from '@/components/elements/RichText';
+import { openInNewTab } from '@/lib/link-target';
 
 /**
  * 标记结构对齐 v0.3 hero 段（ADR-0004：legacy CSS 即组件契约）。
@@ -44,7 +45,7 @@ export function Hero({ data }: { data: HeroData }) {
                 key={action.id ?? i}
                 className={action.type ?? 'primary'}
                 href={action.url ?? '#'}
-                {...(/^https?:\/\//.test(action.url ?? '')
+                {...(openInNewTab(action.url)
                   ? { target: '_blank', rel: 'noopener noreferrer' }
                   : {})}
               >
