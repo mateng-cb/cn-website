@@ -95,7 +95,14 @@ export function ContentGrid({
         </div>
         {data.moreLabel ? (
           <div className="news-more">
-            <a href={data.moreUrl ?? '#'}>{data.moreLabel}</a>
+            <a
+              href={data.moreUrl ?? '#'}
+              {...(openInNewTab(data.moreUrl)
+                ? { target: '_blank', rel: 'noopener noreferrer' }
+                : {})}
+            >
+              {data.moreLabel}
+            </a>
           </div>
         ) : null}
       </section>
@@ -120,7 +127,14 @@ export function ContentGrid({
             </>
           );
           return data.linkCards && card.link ? (
-            <a className={className} href={card.link} key={card.id ?? i}>
+            <a
+              className={className}
+              href={card.link}
+              key={card.id ?? i}
+              {...(openInNewTab(card.link)
+                ? { target: '_blank', rel: 'noopener noreferrer' }
+                : {})}
+            >
               {inner}
             </a>
           ) : (

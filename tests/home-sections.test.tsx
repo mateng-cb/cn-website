@@ -161,6 +161,20 @@ describe('ContentGrid 渲染（v0.3 .insights-preview）', () => {
     expect(cards[0].querySelector('h3')?.textContent).toBe('中国算力出海与跨境智能服务产业白皮书');
     expect(cards[0].querySelector('b')?.textContent).toBe('查看白皮书计划 →');
     expect(cards[0].getAttribute('href')).toBe('/insights');
+    expect(cards[0].getAttribute('target')).toBeNull(); // 主站站内链接同窗
+    // 卡链指向专题落地页时整卡新开（2026-09-23：线上 insights 页 linkCards 卡即此形态）
+    const seedGrid = find<ContentGridData>('sections.content-grid');
+    const { container: c2 } = render(
+      <ContentGrid
+        data={{
+          ...seedGrid,
+          cards: seedGrid.cards?.map((c, i) => (i === 0 ? { ...c, link: '/whitepaper' } : c)),
+        }}
+      />,
+    );
+    const wpCard = c2.querySelector('a.insight-card')!;
+    expect(wpCard.getAttribute('target')).toBe('_blank');
+    expect(wpCard.getAttribute('rel')).toBe('noopener noreferrer');
   });
 });
 
