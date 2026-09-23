@@ -275,18 +275,18 @@ describe('逐页 CTA 回退链（验收 4）', () => {
     expect(cta.getAttribute('href')).toBe('#');
   });
 
-  it('seed 逐页 CTA：全局 formCtaLabel=合作咨询，页面级仅留差异化（insights=研究合作）', () => {
+  it('seed 逐页 CTA：全局 formCtaLabel=合作咨询收口，主站页面级清空（2026-09-23 全站统一）', () => {
     const bySlug = Object.fromEntries(mainSeedPages.map((p) => [p.slug, p]));
-    // 2026-09-22 全站统一：主站头部 CTA 文字走全局 formCtaLabel=合作咨询，
-    // 与全局同值的页面级 ctaLabel 已清（home/government/industry——页面级
-    // 覆盖仅用于真正差异化文案，避免后台改全局时个别页脱队）；锚点 ctaUrl 保留逐页
+    // 2026-09-23 主站全站统一：头部 CTA 文字一律走全局 formCtaLabel（后台一处
+    // 改全站生效），页面级 ctaLabel 全清（insights 的「研究合作」并入全局）；
+    // 锚点 ctaUrl 仍逐页保留；白皮书 landing 的「获取白皮书」是专题转化文案不在此列
     expect(bySlug.home.ctaLabel).toBeUndefined();
     expect(bySlug.home.ctaUrl).toBe('#contact');
     expect(bySlug.government.ctaLabel).toBeUndefined();
     expect(bySlug.government.ctaUrl).toBe('#cooperate');
     expect(bySlug.industry.ctaLabel).toBeUndefined();
     expect(bySlug.industry.ctaUrl).toBe('#contact');
-    expect(bySlug.insights.ctaLabel).toBe('研究合作');
+    expect(bySlug.insights.ctaLabel).toBeUndefined();
     expect(bySlug.insights.ctaUrl).toBe('#cooperate');
     // v0.3 services/resources/alliance 无 nav-cta：seed 留空走全局回退
     expect(bySlug.services.ctaLabel).toBeUndefined();

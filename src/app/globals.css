@@ -1704,6 +1704,8 @@ ul.cards li img {
   width: 44px;
   border-radius: 10px;
   flex: 0 0 auto;
+  /* 兜底：CMS 若仍配横版 logo（logo_cn_en），contain 保证不裁切压扁 */
+  object-fit: contain;
 }
 
 [data-skin='gov'] .hq-brand-icon {
