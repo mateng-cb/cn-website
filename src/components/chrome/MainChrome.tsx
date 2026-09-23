@@ -11,7 +11,8 @@ import { buildMainNavTree } from '@/lib/nav';
  * 不动皮肤切换与专题页既有体系——组件零皮肤分支原则不变。
  * 移动端菜单用 details/summary 零 JS 开合（同 HqChrome 模式）；
  * 二级下拉 v0.3 无源（主站导航全平铺），按 schema navParent 能力自设计：
- * 纯 CSS hover 展开桌面态 + [open] 兜底键盘可达，移动端子项平铺缩进。
+ * 纯 CSS hover 展开桌面态 + [open] 兜底键盘可达，移动端子项平铺恒显
+ * （2026-09-23 定稿：父项点击直达，二级无须逐个点开）。
  *
  * logo 为品牌皮肤资产走 web/public 静态（同 LandingChrome 先例）；
  * CTA 回退链：page.ctaLabel/ctaUrl → config.formCtaLabel/formUrl → 固定文案。
@@ -55,9 +56,10 @@ export function MainChrome({
               top.children.length > 0 ? (
                 <details className="site-nav-drop" key={top.slug}>
                   <summary className={isActive(top) ? 'active' : undefined}>
-                    {/* 父页入口内嵌 summary：桌面点击直达父页（summary 内 interactive
-                        content 不触发 toggle）；移动端由 CSS pointer-events:none
-                        把点击还给 summary 开合二级，sub 内只放子项不重复父级 */}
+                    {/* 父页入口内嵌 summary：summary 内 interactive content 点击
+                        只导航不触发 toggle——桌面移动一致直达父页；移动端二级
+                        平铺恒显（CSS display:block，2026-09-23 定稿），sub 内
+                        只放子项不重复父级 */}
                     <a href={top.url}>{top.navTitle}</a>
                   </summary>
                   <div className="site-nav-sub">

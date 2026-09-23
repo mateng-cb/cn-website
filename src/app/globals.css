@@ -3655,14 +3655,19 @@ ul.cards li img {
     border-bottom-width: 2px;
   }
 
-  /* summary 内嵌的父页链接不吃点击——移动端点击须落到 summary 触发开合
-     （桌面不受此规则影响：点击链接直接导航） */
-  .site-nav-menu nav > .site-nav-drop > summary a {
-    pointer-events: none;
+  /* 父页链接保持可点直达（2026-09-23 定稿：不再 pointer-events:none 交给
+     summary 开合——summary 内 interactive content 点击只导航不 toggle，
+     桌面移动行为一致；点击 summary 文字外的留白 toggle 无视觉副作用） */
+
+  /* 开合箭头隐藏——二级恒显后不再是折叠指示（仅移动端，桌面 hover 语义保留） */
+  .site-nav-menu nav > .site-nav-drop > summary::after {
+    content: none;
   }
 
-  /* 二级下拉在移动端平铺缩进（hover 展开不适用触屏，走 details 开合）*/
+  /* 二级下拉在移动端平铺缩进且默认展开（hover/[open] 条件仅桌面生效；
+     2026-09-23 用户定稿：汉堡菜单内子项直接可见，无须逐个点开） */
   .site-nav .site-nav-sub {
+    display: block;
     position: static;
     transform: none;
     border: 0;
