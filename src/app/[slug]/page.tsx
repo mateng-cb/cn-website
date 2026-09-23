@@ -1,11 +1,17 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getMainNavPages, getPage, getSiteConfigMain } from '@/lib/strapi';
+import {
+  getLandingPage,
+  getMainNavPages,
+  getPage,
+  getSiteConfigMain,
+} from '@/lib/strapi';
 import { enrichSections } from '@/lib/enrich';
 import { isPreviewMode } from '@/lib/preview';
 import { buildMetadata } from '@/lib/seo';
 import { SectionRenderer } from '@/components/SectionRenderer';
 import { MainChrome } from '@/components/chrome/MainChrome';
+import { LandingChrome } from '@/components/chrome/LandingChrome';
 import { PreviewBar } from '@/components/PreviewBar';
 
 /**
@@ -18,46 +24,69 @@ import { PreviewBar } from '@/components/PreviewBar';
  * 不入导航但仍可 URL 直访（导航过滤与页面路由取数互不相关）。
  * 09 号工单：generateMetadata 升级全要素（canonical、og 全家、twitter 卡、og:image
  * 站点默认图回退，见 lib/seo.ts buildMetadata）。
+ * 2026-09-23：landing 回退链——main Page 未命中时按 landing-page（site=main）
+ * 渲染 LandingChrome（运营后台自建专题落地页直挂根路径 /<slug>，与
+ * /whitepaper 同形态；白皮书本体仍由静态段固定路由优先承接）。landing
+ * 分支 sections 走 enrichSections（支持 news/insightList 动态区块注入；
+ * /whitepaper 固定路由维持 06 号行为不 enrich）。
  */
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const [page, config] = await Promise.all([
-    getPage(slug, 'main', { draft: await isPreviewMode() }),
+  const draft = await isPreviewMode();
+  const [page, landing, config] = await Promise.all([
+    getPage(slug, 'main', { draft }),
+    getLandingPage(slug, 'main', { draft }),
     getSiteConfigMain(),
   ]);
-  if (!page) return {};
+  const source = page ?? landing;
+  if (!source) return {};
+  const seo = source.seo;
   return buildMetadata({
     path: `/${slug}`,
-    title: page.seo?.title ?? page.title,
-    description: page.seo?.description,
-    ogImage: page.seo?.ogImage,
+    title: seo?.title ?? source.title,
+    description: seo?.description,
+    ogImage: seo?.ogImage,
     defaultOgImage: config?.ogImageDefault,
-    noindex: page.seo?.noindex,
+    noindex: seo?.noindex,
   });
 }
 
 export default async function ContentPage({ params }: Props) {
   const { slug } = await params;
   const draft = await isPreviewMode();
-  const [page, config, nav] = await Promise.all([
+  const [page, landing, config, nav] = await Promise.all([
     getPage(slug, 'main', { draft }),
+    getLandingPage(slug, 'main', { draft }),
     getSiteConfigMain(),
     getMainNavPages(),
   ]);
-  if (!page) notFound();
-  const sections = await enrichSections(page.sections);
-  return (
-    <MainChrome
-      config={config}
-      nav={nav}
-      currentSlug={slug}
-      ctaLabel={page.ctaLabel}
-      ctaUrl={page.ctaUrl}
-    >
-      {draft ? <PreviewBar /> : null}
-      <SectionRenderer sections={sections} formUrl={config?.formUrl ?? undefined} />
-    </MainChrome>
-  );
+  if (page) {
+    const sections = await enrichSections(page.sections);
+    return (
+      <MainChrome
+        config={config}
+        nav={nav}
+        currentSlug={slug}
+        ctaLabel={page.ctaLabel}
+        ctaUrl={page.ctaUrl}
+      >
+        {draft ? <PreviewBar /> : null}
+        <SectionRenderer sections={sections} formUrl={config?.formUrl ?? undefined} />
+      </MainChrome>
+    );
+  }
+  if (landing) {
+    const sections = await enrichSections(landing.sections);
+    return (
+      <>
+        <LandingChrome page={landing} formUrl={config?.formUrl ?? undefined}>
+          {draft ? <PreviewBar /> : null}
+          <SectionRenderer sections={sections} formUrl={config?.formUrl ?? undefined} />
+        </LandingChrome>
+      </>
+    );
+  }
+  notFound();
 }

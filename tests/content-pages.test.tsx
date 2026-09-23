@@ -2,18 +2,27 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { SectionRenderer } from '@/components/SectionRenderer';
 import { MediaPanel } from '@/components/elements/MediaPanel';
-import type { MediaPanelData, SectionData, StrapiPage } from '@/types/strapi';
+import type { LandingPageData, MediaPanelData, SectionData, StrapiPage } from '@/types/strapi';
 import services from '../../content-seed/content/services.json';
 import industry from '../../content-seed/content/industry.json';
 import resources from '../../content-seed/content/resources.json';
 import alliance from '../../content-seed/content/alliance.json';
 import government from '../../content-seed/content/government.json';
+import whitepaper from '../../content-seed/content/whitepaper.json';
 
 // generateMetadata 用例只替换 getPage/getSiteConfigMain（09 号起 metadata 层
-// 需站点默认 OG 图回退）；strapiMediaUrl 等保持真实实现供渲染用例使用
+// 需站点默认 OG 图回退）；strapiMediaUrl 等保持真实实现供渲染用例使用。
+// getLandingPage/getMainNavPages：[slug] 路由 2026-09-23 起 landing 回退链
+// 与全局件取数（actual 会发真实 fetch，路由级用例必须 mock）
 vi.mock('@/lib/strapi', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/strapi')>();
-  return { ...actual, getPage: vi.fn(), getSiteConfigMain: vi.fn() };
+  return {
+    ...actual,
+    getPage: vi.fn(),
+    getLandingPage: vi.fn(),
+    getMainNavPages: vi.fn(),
+    getSiteConfigMain: vi.fn(),
+  };
 });
 
 /**
@@ -292,10 +301,60 @@ describe('generateMetadata（[slug] 路由 SEO 管道）', () => {
   });
 
   it('页面不存在时返回空 meta（配合 notFound）', async () => {
-    const { getPage } = await import('@/lib/strapi');
+    const { getPage, getLandingPage } = await import('@/lib/strapi');
     vi.mocked(getPage).mockResolvedValue(null);
+    vi.mocked(getLandingPage).mockResolvedValue(null);
     const { generateMetadata } = await import('@/app/[slug]/page');
     const meta = await generateMetadata({ params: Promise.resolve({ slug: 'nope' }) });
     expect(meta).toEqual({});
+  });
+});
+
+describe('[slug] 路由 landing 回退链（2026-09-23：运营自建专题落地页直挂根路径）', () => {
+  /** fixture：白皮书 landing（slug 换非 whitepaper 模拟运营新建，静态段不拦截；
+   *  id/documentId 为 Strapi 运行时字段，seed JSON 不含，测试补齐过类型） */
+  const landingFixture = {
+    ...whitepaper.landingPages[0],
+    id: 1,
+    documentId: 'summit-2026',
+    slug: 'summit-2026',
+  } as LandingPageData;
+
+  it('Page 未命中 → landing 承接：generateMetadata 从 landing.seo 派生', async () => {
+    const { getPage, getLandingPage } = await import('@/lib/strapi');
+    vi.mocked(getPage).mockResolvedValue(null);
+    vi.mocked(getLandingPage).mockResolvedValue(landingFixture);
+    const { generateMetadata } = await import('@/app/[slug]/page');
+    const meta = await generateMetadata({ params: Promise.resolve({ slug: 'summit-2026' }) });
+    expect(meta.title).toBe(landingFixture.seo?.title ?? landingFixture.title);
+    expect(meta.alternates?.canonical).toBe('http://localhost:3001/summit-2026');
+  });
+
+  it('Page 未命中 → landing 承接：渲染 LandingChrome（.landing 容器）', async () => {
+    const { getPage, getLandingPage, getMainNavPages, getSiteConfigMain } = await import(
+      '@/lib/strapi'
+    );
+    vi.mocked(getPage).mockResolvedValue(null);
+    vi.mocked(getLandingPage).mockResolvedValue(landingFixture);
+    vi.mocked(getMainNavPages).mockResolvedValue([]);
+    vi.mocked(getSiteConfigMain).mockResolvedValue(null);
+    const { default: ContentPage } = await import('@/app/[slug]/page');
+    render(await ContentPage({ params: Promise.resolve({ slug: 'summit-2026' }) }));
+    expect(document.querySelector('.landing')).toBeTruthy();
+    expect(document.querySelector('.site-nav')).toBeNull(); // landing 专题页不走主站全局件
+  });
+
+  it('Page 命中时 landing 查询不干扰：仍走 MainChrome', async () => {
+    const { getPage, getLandingPage, getMainNavPages, getSiteConfigMain } = await import(
+      '@/lib/strapi'
+    );
+    vi.mocked(getPage).mockResolvedValue(pages.government);
+    vi.mocked(getLandingPage).mockResolvedValue(landingFixture); // 同 slug landing 也在
+    vi.mocked(getMainNavPages).mockResolvedValue([]);
+    vi.mocked(getSiteConfigMain).mockResolvedValue(null);
+    const { default: ContentPage } = await import('@/app/[slug]/page');
+    render(await ContentPage({ params: Promise.resolve({ slug: 'government' }) }));
+    expect(document.querySelector('.site-nav')).toBeTruthy();
+    expect(document.querySelector('.landing')).toBeNull();
   });
 });
