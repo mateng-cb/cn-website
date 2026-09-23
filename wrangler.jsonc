@@ -13,8 +13,12 @@
     "binding": "ASSETS"
   },
   // Worker 运行时变量（ISR/revalidate 期取数；密钥类不入库，走 CF 后台机密）：
-  // 构建期同值另由 build 环境注入（本地 build:cf 命令行前缀 / CF Builds 配置）
+  // 构建期同值另由 build 环境注入（本地 build:cf 命令行前缀 / CF Builds 配置）。
+  // SITE_URL：canonical/sitemap/robots 的 URL 根（QA T-101~103 根因是构建期
+  // 未注入回退 localhost）——正式站部署 suanlihaiyang.com 时必须同步改此处
+  // 并在 CF Builds 构建环境注入同值。
   "vars": {
-    "STRAPI_URL": "https://top-slhy.fintechquan.cn"
+    "STRAPI_URL": "https://top-slhy.fintechquan.cn",
+    "SITE_URL": "https://cn-test.tokenocean.net"
   }
 }

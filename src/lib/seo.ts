@@ -15,10 +15,11 @@ import { strapiMediaUrl } from '@/lib/strapi';
 
 /**
  * 站点绝对 URL 根：canonical、og:url、og:image、sitemap、JSON-LD @id 共用。
- * 生产由环境覆盖（https://suanlihaiyang.com），dev 默认本地 3001。
- * 尾斜杠统一剥掉，路径拼接侧保证根路径拼成 `${SITE_URL}/`。
+ * 计算与注入纪律见 lib/site-url.ts（next.config.ts 共用同源，正式站必须
+ * 显式注入 SITE_URL=https://suanlihaiyang.com）。
  */
-export const SITE_URL = (process.env.SITE_URL ?? 'http://localhost:3001').replace(/\/+$/, '');
+import { SITE_URL } from '@/lib/site-url';
+export { SITE_URL };
 
 /** og 全站常量（映射表 §2：不入库，代码写死；v0.3 实测 13 页同值） */
 export const OG_SITE_NAME = '算力海洋';

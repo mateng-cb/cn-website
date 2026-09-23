@@ -1,6 +1,18 @@
 import type { NextConfig } from 'next';
+import { ROBOTS_NOINDEX } from './src/lib/site-url';
 
 const nextConfig: NextConfig = {
+  // 测试站防收录（QA T-104）：非正式域名部署（SITE_URL 未指向
+  // suanlihaiyang.com）全站加 X-Robots-Tag: noindex——与正式环境隔离收录。
+  // X-Robots-Tag 而非 robots.txt Disallow：Disallow 会阻止爬虫读到 noindex
+  // 信号，URL 仍可能以外链形式被索引。正式站配 SITE_URL 后本头自动消失。
+  ...(ROBOTS_NOINDEX
+    ? {
+        async headers() {
+          return [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }];
+        },
+      }
+    : {}),
   // 双部署路径：Docker（10 号工单）需要 standalone 自包含产物；Cloudflare OpenNext
   // 打包用 Next 默认产物、standalone 须关闭——build:cf 脚本注入 DEPLOY_TARGET=cloudflare
   output: process.env.DEPLOY_TARGET === 'cloudflare' ? undefined : 'standalone',
