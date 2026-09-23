@@ -229,9 +229,12 @@ describe('MainChrome 导航渲染（验收 1/2）', () => {
     expect(drop?.querySelector('summary a')?.getAttribute('href')).toBe('/insights');
     const sub = drop?.querySelector('.site-nav-sub');
     expect(sub?.querySelectorAll('a')).toHaveLength(1);
-    expect(
-      within(sub as HTMLElement).getByRole('link', { name: '词元工厂发展白皮书' }).getAttribute('href'),
-    ).toBe('/whitepaper');
+    const wpLink = within(sub as HTMLElement).getByRole('link', { name: '词元工厂发展白皮书' });
+    expect(wpLink.getAttribute('href')).toBe('/whitepaper');
+    // 导航子项指向专题落地页也新开（2026-09-23：lib/link-target，线上即此形态）；
+    // 父页 /insights 是主站内容页，同窗
+    expect(wpLink.getAttribute('target')).toBe('_blank');
+    expect(drop?.querySelector('summary a')?.getAttribute('target')).toBeNull();
   });
 
   it('navHidden 页不在导航（取数层过滤，seed 侧无此页），URL 直访由路由层保证', () => {

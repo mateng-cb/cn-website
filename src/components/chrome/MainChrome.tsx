@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { MainNavItem, MainNavNode, SiteConfigMainData } from '@/types/strapi';
 import { buildMainNavTree } from '@/lib/nav';
-import { openInNewTab } from '@/lib/link-target';
+import { newTabProps, openInNewTab } from '@/lib/link-target';
 
 /**
  * 主站全局件（08 号工单，v0.3/index.html header.top + footer.main-footer 骨架）：
@@ -60,8 +60,11 @@ export function MainChrome({
                     {/* 父页入口内嵌 summary：summary 内 interactive content 点击
                         只导航不触发 toggle——桌面移动一致直达父页；移动端二级
                         平铺恒显（CSS display:block，2026-09-23 定稿），sub 内
-                        只放子项不重复父级 */}
-                    <a href={top.url}>{top.navTitle}</a>
+                        只放子项不重复父级。导航项链向分站/专题时新开窗
+                        （2026-09-23：后台已把白皮书配为「研究与洞察」子项） */}
+                    <a href={top.url} {...newTabProps(top.url)}>
+                      {top.navTitle}
+                    </a>
                   </summary>
                   <div className="site-nav-sub">
                     {top.children.map((child) => (
@@ -69,6 +72,7 @@ export function MainChrome({
                         key={child.slug}
                         className={child.slug === currentSlug ? 'active' : undefined}
                         href={child.url}
+                        {...newTabProps(child.url)}
                       >
                         {child.navTitle}
                       </a>
@@ -80,6 +84,7 @@ export function MainChrome({
                   key={top.slug}
                   className={top.slug === currentSlug ? 'active' : undefined}
                   href={top.url}
+                  {...newTabProps(top.url)}
                 >
                   {top.navTitle}
                 </a>

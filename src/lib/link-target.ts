@@ -15,3 +15,8 @@ export function openInNewTab(url: string | null | undefined): boolean {
   if (/^https?:\/\//.test(url)) return true;
   return NEW_TAB_PREFIXES.some((p) => url === p || url.startsWith(`${p}/`));
 }
+
+/** openInNewTab 的展开形态：命中时返回 target/rel props，否则空对象 */
+export function newTabProps(url: string | null | undefined) {
+  return openInNewTab(url) ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+}
