@@ -283,8 +283,8 @@ describe('/news 列表页（2.0 PRD 7.1「查看全部动态」承接页）', ()
     vi.mocked(getLatestNews).mockResolvedValue([...seedNews, internalNews]);
     const { default: NewsListPage } = await import('@/app/news/page');
     render(await NewsListPage());
-    // head 渲染（SectionHead heading）
-    expect(screen.getByText('新闻动态').tagName).toBe('H2');
+    // head 渲染（SectionHead heading）：本页无 hero，区块标题升页面级 H1（QA T-106）
+    expect(screen.getByText('新闻动态').tagName).toBe('H1');
     // 列表页一行一条：容器 .news-rows（三卡网格形态留给 CMS 预览区块）
     expect(document.querySelector('.news-rows')).toBeTruthy();
     expect(document.querySelector('.news-grid')).toBeNull();

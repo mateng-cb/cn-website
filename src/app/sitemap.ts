@@ -4,7 +4,7 @@ import {
   getPublishedNews,
   getPublishedPages,
 } from '@/lib/strapi';
-import { buildSitemapEntries } from '@/lib/seo';
+import { absoluteUrl, buildSitemapEntries } from '@/lib/seo';
 
 /**
  * sitemap.xml（09 号工单，url-plan.md §4 定稿）：
@@ -20,5 +20,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getPublishedLandingPages(),
     getPublishedNews(),
   ]);
-  return buildSitemapEntries(pages, landings, news);
+  // /news 常驻列表页固定收录（2026-09-23 推翻「不进 sitemap」旧决策，QA T-105）
+  return [
+    { url: absoluteUrl('/news') },
+    ...buildSitemapEntries(pages, landings, news),
+  ];
 }

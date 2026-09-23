@@ -209,7 +209,7 @@ describe('sitemap（12 页 + hq 前缀 + 白皮书不在 + 站内态规则 + las
     expect(pagePath('hq', 'cloud')).toBe('/huaqiao/cloud');
   });
 
-  it('app/sitemap.ts 路由：三路取数后走同一拼装管道', async () => {
+  it('app/sitemap.ts 路由：三路取数后走同一拼装管道 + /news 常驻列表页', async () => {
     const { getPublishedPages, getPublishedLandingPages, getPublishedNews } = await import(
       '@/lib/strapi'
     );
@@ -218,7 +218,8 @@ describe('sitemap（12 页 + hq 前缀 + 白皮书不在 + 站内态规则 + las
     vi.mocked(getPublishedNews).mockResolvedValue(sitemapNews);
     const { default: sitemap } = await import('@/app/sitemap');
     const out = await sitemap();
-    expect(out.map((e) => e.url)).toEqual(urls);
+    // 2026-09-23 QA T-105：/news 常驻列表页固定收录（推翻旧「不进」决策）
+    expect(out.map((e) => e.url)).toEqual([`${SITE_URL}/news`, ...urls]);
   });
 });
 

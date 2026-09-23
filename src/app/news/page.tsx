@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getLatestNews, getMainNavPages, getSiteConfigMain } from '@/lib/strapi';
+import { buildMetadata } from '@/lib/seo';
 import { MainChrome } from '@/components/chrome/MainChrome';
 import { ContentGrid } from '@/components/sections/ContentGrid';
 import type { ContentGridData } from '@/types/strapi';
@@ -12,12 +13,20 @@ import type { ContentGridData } from '@/types/strapi';
  * 缺省三卡不变）。
  * 不传 currentSlug：动态与研究洞察是两个独立栏目（2026-09-21 用户定界），
  * 本页不高亮任何主导航项；/insights 的 news 区块仅是预览入口。
- * /news 不进 sitemap（导航可达即可，seo.test 13 条基线不动——工单写死决策）。
+ * 2026-09-23 QA T-105/106：/news 固定进 sitemap；metadata 升 buildMetadata
+ * 全要素（canonical/og/twitter + 站点默认图回退）；本页无 hero，区块标题
+ * 升 H1（headLevel），title/description 扩写至规范长度。
  */
-export const metadata: Metadata = {
-  title: '新闻动态｜算力海洋',
-  description: '算力海洋最新动态：产业合作、活动发布与媒体报道。',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getSiteConfigMain();
+  return buildMetadata({
+    path: '/news',
+    title: '新闻动态与产业资讯｜算力海洋',
+    description:
+      '算力海洋新闻动态与产业资讯：平台合作签约、产业活动发布、研究成果与媒体报道，了解中国算力与 AI 应用出海的最新进展。',
+    defaultOgImage: config?.ogImageDefault,
+  });
+}
 
 export default async function NewsListPage() {
   const [news, config, nav] = await Promise.all([
@@ -28,6 +37,7 @@ export default async function NewsListPage() {
   return (
     <MainChrome config={config} nav={nav}>
       <ContentGrid
+        headLevel="h1"
         data={
           {
             __component: 'sections.content-grid',

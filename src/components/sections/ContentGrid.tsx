@@ -28,7 +28,14 @@ const INSIGHT_CATEGORY_LABELS: Record<NonNullable<InsightEntryData['category']>,
  *   类名独立于 .insight-cards（insights-news.test 对其有数量断言）。
  *   id=insights 是本页 hero govCard「点击查看」尾链的锚点落点（同 id=news 增量钩子先例）。
  */
-export function ContentGrid({ data }: { data: ContentGridData }) {
+export function ContentGrid({
+  data,
+  headLevel = 'h2',
+}: {
+  data: ContentGridData;
+  /** 页面级 H1 场景（/news 列表页区块标题升 H1），缺省 h2 */
+  headLevel?: 'h1' | 'h2';
+}) {
   if (data.kind === 'insightList') {
     const entries = data.insights ?? [];
     return (
@@ -59,7 +66,7 @@ export function ContentGrid({ data }: { data: ContentGridData }) {
     const news = data.news ?? [];
     return (
       <section className="section tint" id="news">
-        {data.head ? <SectionHead data={data.head} /> : null}
+        {data.head ? <SectionHead data={data.head} headingAs={headLevel} /> : null}
         <div className={data.newsLayout === 'rows' ? 'news-rows' : 'news-grid'}>
           {news.map((item) => {
             const external = Boolean(item.externalUrl);
