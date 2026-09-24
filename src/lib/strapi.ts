@@ -67,7 +67,8 @@ export function strapiMediaUrl(media: StrapiMedia | null | undefined): string {
  * 后续工单逐区块追加 on 条目。
  */
 function appendSectionsPopulate(params: URLSearchParams) {
-  params.set('populate[sections][on][sections.hero][populate][head]', 'true');
+  // hero.head / signal-band.head 已随 cn-strapi 死字段清理从 schema 删除，
+  // 不可再 populate——Strapi 5 对未知键整条查询 400（2026-09-24 全站 500 根因）
   params.set('populate[sections][on][sections.hero][populate][metaRows]', 'true');
   params.set('populate[sections][on][sections.hero][populate][actions]', 'true');
   params.set('populate[sections][on][sections.hero][populate][badges]', 'true');
@@ -82,7 +83,6 @@ function appendSectionsPopulate(params: URLSearchParams) {
   params.set('populate[sections][on][sections.card-grid][populate][cards][populate][list][populate][items]', 'true');
   // 2.0 PRD 4.1：网格下方尾按钮（elements.action）
   params.set('populate[sections][on][sections.card-grid][populate][footerAction]', 'true');
-  params.set('populate[sections][on][sections.signal-band][populate][head]', 'true');
   params.set('populate[sections][on][sections.signal-band][populate][items]', 'true');
   params.set('populate[sections][on][sections.process-flow][populate][head]', 'true');
   params.set('populate[sections][on][sections.process-flow][populate][steps][populate][icon]', 'true');
