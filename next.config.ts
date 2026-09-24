@@ -22,6 +22,8 @@ const nextConfig: NextConfig = {
       { protocol: 'http', hostname: 'localhost', port: '1338' },
       // Cloudflare 路径：Strapi 公网地址（测试环境 nginx 反代）
       { protocol: 'https', hostname: 'top-slhy.fintechquan.cn' },
+      // 生产 Strapi 媒体域名
+      { protocol: 'https', hostname: 'admin.suanlihaiyang.com' },
     ],
     // CF 分支关图片优化：Workers 跑不了 sharp 原生模块（OpenNext 打包即报
     // No loader is configured for ".node" files）；本站图片均 <img> 直链，零影响

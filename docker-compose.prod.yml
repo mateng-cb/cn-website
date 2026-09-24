@@ -1,0 +1,32 @@
+name: slhy-website-prod
+
+services:
+  website:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SITE_URL: ${SITE_URL:-https://suanlihaiyang.com}
+        STRAPI_URL: http://127.0.0.1:1339
+        REVALIDATE_TOKEN: ${REVALIDATE_TOKEN}
+        PREVIEW_SECRET: ${PREVIEW_SECRET}
+        STRAPI_PREVIEW_TOKEN: ${STRAPI_PREVIEW_TOKEN}
+      network: host
+    image: suanlihaiyang-website:prod
+    container_name: suanlihaiyang-website-prod
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - cn-strapi-prod
+
+networks:
+  cn-strapi-prod:
+    external: true
+    name: cn-strapi-prod_internal
