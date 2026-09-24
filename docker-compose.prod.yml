@@ -11,6 +11,7 @@ services:
         REVALIDATE_TOKEN: ${REVALIDATE_TOKEN}
         PREVIEW_SECRET: ${PREVIEW_SECRET}
         STRAPI_PREVIEW_TOKEN: ${STRAPI_PREVIEW_TOKEN}
+        STRAPI_PUBLIC_URL: ${STRAPI_PUBLIC_URL}
       network: host
     image: suanlihaiyang-website:prod
     container_name: suanlihaiyang-website-prod

@@ -19,6 +19,14 @@ import type {
 export const STRAPI_URL = process.env.STRAPI_URL ?? 'http://localhost:1338';
 
 /**
+ * 浏览器可访问的 Strapi 公网根地址。SSR 取数可以用容器内 STRAPI_URL，
+ * 但 /uploads 必须输出公网地址，否则 HTML 会泄漏 http://strapi:1337。
+ */
+export const STRAPI_PUBLIC_URL = (
+  process.env.STRAPI_PUBLIC_URL ?? ''
+).replace(/\/+$/, '');
+
+/**
  * 发布态取数的网络异常容错（10 号复审采 (b)）：
  * fetch reject（连接拒绝/DNS 失败）返回 null，调用方按「取不到」降级
  * （页面 notFound / 列表空集）——next build 期 SSG/sitemap 取数遇 Strapi
@@ -56,7 +64,8 @@ function fetchInit(draft?: boolean): RequestInit {
 /** Strapi 媒体相对 URL → 绝对 URL（Strapi 5 返回 /uploads/xxx） */
 export function strapiMediaUrl(media: StrapiMedia | null | undefined): string {
   if (!media?.url) return '';
-  return media.url.startsWith('http') ? media.url : `${STRAPI_URL}${media.url}`;
+  const publicBase = STRAPI_PUBLIC_URL || STRAPI_URL;
+  return media.url.startsWith('http') ? media.url : `${publicBase}${media.url}`;
 }
 
 /**
