@@ -1,4 +1,5 @@
 import { HQ_GLOBAL_PAGE_HTML } from '@/lib/hq-static/global';
+import { withFavicon } from '@/lib/hq-static/head';
 import { SITE_URL } from '@/lib/site-url';
 
 /**
@@ -14,8 +15,9 @@ export const dynamic = 'force-static';
 
 export function GET() {
   // __SITE_URL__ 占位符（head 内 canonical/og:url，QA T-108）在此替换——
-  // force-static 构建期执行一次，域名与全站 SITE_URL 配置同源
-  return new Response(HQ_GLOBAL_PAGE_HTML.replaceAll('__SITE_URL__', SITE_URL), {
+  // force-static 构建期执行一次，域名与全站 SITE_URL 配置同源；
+  // withFavicon 兜底注入 icon link（2026-09-24，标签页占位图标修复）
+  return new Response(withFavicon(HQ_GLOBAL_PAGE_HTML.replaceAll('__SITE_URL__', SITE_URL)), {
     headers: { 'content-type': 'text/html; charset=utf-8' },
   });
 }

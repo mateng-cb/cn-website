@@ -42,6 +42,9 @@ describe('/huaqiao 新版静态二级页（单文件内嵌，暂不走 CMS）', 
       const html = await res.text();
       expect(html).toContain(`<title>${titlePrefix}`);
       expect(html).toContain('｜华侨数港</title>');
+      // head 带 favicon link（2026-09-24）：无 icon link 时浏览器标签页回退
+      // 默认图标（硬导航后需盲探 /favicon.ico，期间显示占位图标）
+      expect(html).toContain('<link rel="icon" href="/favicon.ico" />');
       // 主视觉引用 public 静态图（构建期已从 base64 外置）
       expect(html).toContain(`url('/huaqiao/${slug}-hero.jpg')`);
       // 1.4MB base64 位图不回流（防再次导入未替换 data URI）

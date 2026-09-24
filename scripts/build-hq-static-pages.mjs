@@ -100,15 +100,18 @@ for (const arg of args) {
       `\n      </nav>`,
   );
 
-  // 6. head 注入 canonical + OG/Twitter（QA T-108，2026-09-23）：URL 根用
-  //    __SITE_URL__ 占位，route.ts 构建期 replaceAll 为 lib/site-url 的
-  //    SITE_URL——域名配置与全站同源（测试站/正式站免重导出）
+  // 6. head 注入 favicon + canonical + OG/Twitter（QA T-108，2026-09-23）：
+  //    URL 根用 __SITE_URL__ 占位，route.ts 构建期 replaceAll 为 lib/site-url 的
+  //    SITE_URL——域名配置与全站同源（测试站/正式站免重导出）。
+  //    favicon link（2026-09-24）：原始导出 head 无 icon 声明，浏览器硬导航
+  //    进页后须盲探 /favicon.ico，期间标签页显示默认占位图标
   const titleM = html.match(/<title>([^<]+)<\/title>/);
   const descM = html.match(/<meta name="description" content="([^"]*)" \/>/);
   if (!titleM || !descM) throw new Error(`${slug}: title/description 缺失，head 注入失败`);
   html = html.replace(
     /<\/title>/,
     `</title>\n` +
+      `<link rel="icon" href="/favicon.ico" />\n` +
       `<link rel="canonical" href="__SITE_URL__/huaqiao/${slug}" />\n` +
       `<meta property="og:type" content="website" />\n` +
       `<meta property="og:locale" content="zh_CN" />\n` +
